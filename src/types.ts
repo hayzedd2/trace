@@ -1,6 +1,7 @@
 export interface TraceOptions {
   autoSync?: boolean;
   onlyTrackUniqueEvents?: boolean;
+  collectUserData?:boolean
   sessionKey?: string;
 }
 export interface TraceEvent {
@@ -8,9 +9,9 @@ export interface TraceEvent {
   name: string;
   properties: Record<string, any>;
   timeStamp: number;
-  browser: string | undefined;
-  location: string | undefined;
-  deviceType:
+  browser?: string | undefined;
+  location?: string | undefined;
+  deviceType?:
     | "mobile"
     | "tablet"
     | "console"
@@ -19,6 +20,6 @@ export interface TraceEvent {
     | "xr"
     | "embedded"
     | undefined;
-  os: string | undefined;
+  os?: string | undefined;
   count: number | undefined;
 }

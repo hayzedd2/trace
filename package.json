@@ -4,14 +4,23 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
-
-    "scripts": {
+  "scripts": {
     "build": "tsup"
   },
-    
-  "author": "",
+  "keywords": [
+    "trace",
+    "track",
+    "user flow",
+    "track user flow",
+    "log user flow"
+  ],
+  "author": "Alhameen",
   "license": "ISC",
-  "description": "",
+  "description": "Track what a user is doing anywhere in your app!",
+  "repository": {
+    "url": "https://github.com/hayzedd2/trace"
+  },
+  "homepage": "https://github.com/hayzedd2/trace",
   "devDependencies": {
     "@types/node": "^22.13.14",
     "tsup": "^8.4.0",

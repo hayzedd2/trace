@@ -1,13 +1,13 @@
 import { UAParser } from "ua-parser-js";
 import { TraceEvent, TraceOptions } from "./types";
 
-
 const ua = navigator.userAgent;
 const { browser, os, device } = UAParser(ua);
 export const createTrace = (options: TraceOptions = {}) => {
   const {
     autoSync = true,
     onlyTrackUniqueEvents = false,
+    collectUserData = false,
     sessionKey = "trace_session",
   } = options;
 
@@ -51,12 +51,17 @@ export const createTrace = (options: TraceOptions = {}) => {
         sessionId,
         properties,
         count: 1,
-        ...context,
+        ...(collectUserData ? context : {}),
       });
 
       localStorage.setItem("trace_logs", JSON.stringify(storedEvents));
     },
-
+    query: (name: string) => {
+      const storedEvents: TraceEvent[] = JSON.parse(
+        localStorage.getItem("trace_logs") || "[]"
+      );
+      return storedEvents.find((e) => e.name == name);
+    },
     getLogs: () => JSON.parse(localStorage.getItem("trace_logs") || "[]"),
     clear: () => localStorage.removeItem("trace_logs"),
     sync: async (syncFn: (events: TraceEvent[]) => Promise<void>) => {
@@ -75,6 +80,6 @@ export const createTrace = (options: TraceOptions = {}) => {
 };
 
 const detectLocation = () => {
-    // WORK TO DO HERE
+  // WORK TO DO HERE
   return "Lagos, Nigeria";
 };
