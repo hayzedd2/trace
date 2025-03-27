@@ -1,0 +1,23 @@
+{
+  "name": "trace-it",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+
+    "scripts": {
+    "build": "tsup"
+  },
+    
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.13.14",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "ua-parser-js": "^2.0.3"
+  }
+}

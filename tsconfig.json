@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+      "target": "ES2022",
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "module":"Node16",
+      "moduleResolution": "node16",
+      "outDir": "dist",
+      "declaration": true,
+      "esModuleInterop": true,
+      "strict": true,
+      "noEmit": true,
+  
+    },
+    "include": [
+      "src"
+  , "tsup.config.ts"  ],
+    "exclude": ["node_modules"]
+  }
+  
