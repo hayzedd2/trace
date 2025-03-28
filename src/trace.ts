@@ -12,14 +12,12 @@ export const createTrace = (options: TraceOptions = {}) => {
     collectUserData = false,
     sessionKey = "trace_session",
   } = options;
-
   const context = {
     browser: browser.name,
     location: detectLocation(),
     deviceType: device.type,
     os: os.name,
   };
-
   const getSessionId = () => {
     let sessionId = localStorage.getItem(sessionKey);
     if (!sessionId) {
