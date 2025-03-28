@@ -3,9 +3,11 @@ import { TraceEvent, TraceOptions } from "./types";
 
 const ua = navigator.userAgent;
 const { browser, os, device } = UAParser(ua);
+const getLogs = () => {
+  return JSON.parse(localStorage.getItem("trace_logs") || "[]");
+};
 export const createTrace = (options: TraceOptions = {}) => {
   const {
-    autoSync = true,
     onlyTrackUniqueEvents = false,
     collectUserData = false,
     sessionKey = "trace_session",
@@ -31,41 +33,49 @@ export const createTrace = (options: TraceOptions = {}) => {
     track: (name: string, properties: Record<string, any> = {}) => {
       const sessionId = getSessionId();
       const eventSignature = `${sessionId}_${name}`;
-      const storedEvents: TraceEvent[] = JSON.parse(
-        localStorage.getItem("trace_logs") || "[]"
-      );
+      const storedEvents: TraceEvent[] = getLogs();
       const existingEvent = storedEvents.find((event) => event.name === name);
       if (onlyTrackUniqueEvents) {
         if (existingEvent) {
           existingEvent.count = (existingEvent.count || 1) + 1;
           localStorage.setItem("trace_logs", JSON.stringify(storedEvents));
-          return;
+          return {
+            event: null,
+            sync: async () => console.warn("No new event to sync"),
+          };
         }
         trackedEvents.add(eventSignature);
       }
-
-      // If not only tracking unique events, we always push a new event
-      storedEvents.push({
+      const newEvent = {
         name,
         timeStamp: Date.now(),
         sessionId,
         properties,
         count: 1,
         ...(collectUserData ? context : {}),
-      });
-
+      };
+      storedEvents.push(newEvent);
       localStorage.setItem("trace_logs", JSON.stringify(storedEvents));
+      return {
+        event: newEvent,
+        sync: async (syncFn: (events: TraceEvent) => Promise<void>) => {
+          try {
+            await syncFn(newEvent);
+          } catch (error) {
+            console.error("Sync failed:", error);
+          }
+        },
+      };
     },
     query: (name: string) => {
-      const storedEvents: TraceEvent[] = JSON.parse(
-        localStorage.getItem("trace_logs") || "[]"
-      );
-      return storedEvents.find((e) => e.name == name);
+      const storedEvents: TraceEvent[] = getLogs();
+      const eventFound = storedEvents.find((e) => e.name == name);
+      return eventFound ?? null;
     },
-    getLogs: () => JSON.parse(localStorage.getItem("trace_logs") || "[]"),
+    getLogs: () => getLogs(),
     clear: () => localStorage.removeItem("trace_logs"),
-    sync: async (syncFn: (events: TraceEvent[]) => Promise<void>) => {
-      const logs = JSON.parse(localStorage.getItem("trace_logs") || "[]");
+    syncEvents: async (syncFn: (events: TraceEvent[]) => Promise<void>) => {
+      const logs = getLogs();
       if (logs.length === 0) {
         console.warn("No events available, so we cant sync");
         return;
