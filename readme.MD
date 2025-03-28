@@ -4,31 +4,31 @@
 Easily track and sync user interactions anywhere in your app, with optional **auto-syncing, user data collection, and unique event tracking**.
 
 ## Features
-✅ **Track events** anywhere in your app.  
-✅ **Auto-sync tracked events** whenever they occur.  
-✅ **Prevent duplicate event tracking** with `onlyTrackUniqueEvents`.  
-✅ **Collect user data** (OS, browser, location) if enabled.  
-✅ **Query previous events** using `trace.query()`.  
-✅ **Clear all stored events** when needed.  
+**Track events** anywhere in your app.  
+**Auto-sync tracked events** whenever they occur.  
+**Prevent duplicate event tracking** with `onlyTrackUniqueEvents`.  
+**Collect user data** (OS, browser, location) if enabled.  
+**Query previous events** using `trace.query()`.  
+**Clear all stored events** when needed.  
 
 ---
 
 ## Installation
 
 ```bash
-npm install trace-it
+npm install trace-everything
 ```
 
 or
 
 ```bash
-yarn add trace-it
+yarn add trace-everything
 ```
 
 or
 
 ```bash
-bun add trace-it
+bun add trace-everything
 ```
 
 ---
@@ -38,7 +38,7 @@ bun add trace-it
 ### **Initialize Trace**
 
 ```tsx
-import { createTrace } from "trace-it";
+import { createTrace } from "trace-everything";
 
 // Create a trace instance
 const trace = createTrace({

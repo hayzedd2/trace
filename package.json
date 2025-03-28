@@ -1,5 +1,5 @@
 {
-  "name": "trace-it",
+  "name": "trace-everything",
   "version": "1.0.0",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -16,7 +16,7 @@
   ],
   "author": "Alhameen",
   "license": "ISC",
-  "description": "Track what a user is doing anywhere in your app!",
+  "description": "Track and sync user interactions/events anywhere in your app!",
   "repository": {
     "url": "https://github.com/hayzedd2/trace"
   },
