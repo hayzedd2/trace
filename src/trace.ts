@@ -6,18 +6,19 @@ const { browser, os, device } = UAParser(ua);
 const getLogs = () => {
   return JSON.parse(localStorage.getItem("trace_logs") || "[]");
 };
+const initContext = async () => ({
+  browser: browser.name,
+  deviceType: device.type,
+  os: os.name,
+  location: await detectLocation(),
+});
+
 export const createTrace = (options: TraceOptions = {}) => {
   const {
     onlyTrackUniqueEvents = false,
     collectUserData = false,
     sessionKey = "trace_session",
   } = options;
-  const context = {
-    browser: browser.name,
-    location: detectLocation(),
-    deviceType: device.type,
-    os: os.name,
-  };
   const getSessionId = () => {
     let sessionId = localStorage.getItem(sessionKey);
     if (!sessionId) {
@@ -28,7 +29,7 @@ export const createTrace = (options: TraceOptions = {}) => {
   };
   const trackedEvents = new Set<string>();
   return {
-    track: (name: string, properties: Record<string, any> = {}) => {
+    track: async (name: string, properties: Record<string, any> = {}) => {
       const sessionId = getSessionId();
       const eventSignature = `${sessionId}_${name}`;
       const storedEvents: TraceEvent[] = getLogs();
@@ -50,7 +51,7 @@ export const createTrace = (options: TraceOptions = {}) => {
         sessionId,
         properties,
         count: 1,
-        ...(collectUserData ? context : {}),
+        ...(collectUserData ? await initContext() : {}),
       };
       storedEvents.push(newEvent);
       localStorage.setItem("trace_logs", JSON.stringify(storedEvents));
@@ -87,7 +88,27 @@ export const createTrace = (options: TraceOptions = {}) => {
   };
 };
 
-const detectLocation = () => {
-  // WORK TO DO HERE
-  return "Lagos, Nigeria";
+const detectLocation = async () => {
+  const CACHE_KEY = "cached_location";
+  const EXPIRY_TIME = 60 * 60 * 1000;
+
+  // Check localStorage for cached location
+  const cached = localStorage.getItem(CACHE_KEY);
+  if (cached) {
+    const { location, timestamp } = JSON.parse(cached);
+    if (Date.now() - timestamp < EXPIRY_TIME) {
+      return location;
+    }
+  }
+  // Fetch new location
+  try {
+    const response = await fetch("https://ipapi.co/json/");
+    const data = await response.json();
+    const location = `${data.city}, ${data.country_name}`;
+    // Save new location in cache
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ location, timestamp: Date.now() }));
+    return location;
+  } catch (error) {
+    return "Unknown location";
+  }
 };
